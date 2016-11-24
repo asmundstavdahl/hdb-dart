@@ -1,0 +1,9 @@
+name: hdb
+version: 1.0.0
+description: A dart implementation of the HDB concept.
+
+author: Åsmund Stavdahl <smund3@gmail.com>
+
+dependencies:
+  astest:
+    git: https://github.com/asmundstavdahl/astest-dart.git
