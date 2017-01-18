@@ -1,4 +1,6 @@
 # hdb-dart
 A dart implementation of the HDB concept.
 
-Take 2.
+# Usage
+
+`dart bin/hdb-restful-server.dart <port (44550)>`

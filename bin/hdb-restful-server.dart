@@ -1,11 +1,27 @@
 import 'dart:io';
 import "dart:convert" show UTF8;
 
+int port = 44550;
+
+String usage = """Usage:
+\t\$0 <port>
+
+\tport\tdefault: $port""";
+
 Map<String, String> data = new Map<String, String>();
 
-main() async {
+main(List<String> args) async {
+  if(args.length > 0){
+    if(args.first == "--help"){
+      print(usage);
+      exitCode = 0;
+      return;
+    }
+    port = int.parse(args[0]);
+  }
+
   var requestServer =
-      await HttpServer.bind(InternetAddress.ANY_IP_V4, 44550);
+      await HttpServer.bind(InternetAddress.ANY_IP_V4, port);
   print('listening on localhost, port ${requestServer.port}');
 
   await for (HttpRequest request in requestServer) {
