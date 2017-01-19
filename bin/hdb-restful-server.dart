@@ -1,5 +1,5 @@
-import 'dart:io';
 import "dart:convert" show UTF8;
+import 'dart:io';
 
 int port = 44550;
 
@@ -83,7 +83,9 @@ int getLastNumberedChildIndexAtKey(String parentKey){
 }
 
 String getData(key){
-  return data[key];
+  String value = data[key];
+  print("\t" + key + " → " + value);
+  return value != null ?value :"";
 }
 
 void setData(key, value){
