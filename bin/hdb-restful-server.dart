@@ -95,7 +95,7 @@ int getLastNumberedChildIndexAtKey(String parentKey) {
 
 String getData(key) {
   String value = data[key];
-  print("\t" + key + " → " + value);
+  print("\t" + key + " → " + (value != null ? value : "<NO VALUE>"));
   return value != null ? value : "";
 }
 
