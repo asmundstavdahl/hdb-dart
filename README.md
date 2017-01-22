@@ -9,7 +9,18 @@ cd hdb-dart
 ```
 
 # Usage
+## Simple
+```
+./server.sh
+```
+
+
+## Background mode:
 
 ```
-dart bin/hdb-restful-server.dart <port (44550)>
+screen -m -d -S hdb ./server.sh <port (default: 44550)>
 ```
+
+Reconnect: `screen -r hdb`
+
+Then disconnect again: `Ctrl+A+D`
