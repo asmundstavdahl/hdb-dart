@@ -115,14 +115,28 @@ setData(key, value) async {
   await new File(persistanceFileName).writeAsString(JSON.encode(data));
 }
 
-List<String> getChildrenAtKey(parentKey) {
+List<String> getChildrenAtKey(parentKey, [recursive = false]) {
   List<String> children = new List<String>();
 
   data.forEach((key, value) {
     if (key.startsWith(parentKey) && key != parentKey) {
-      children.add(key.split("/").last);
+      String childKey = key.replaceFirst(parentKey, "");
+      if (recursive || !childKey.contains("/")) {
+        children.add(childKey);
+      }
     }
   });
 
-  return children;
+  children.sort();
+
+  List<String> uniqueChildren = new List<String>();
+
+  uniqueChildren.add(children.first);
+  for (String child in children) {
+    if (uniqueChildren.last != child) {
+      uniqueChildren.add(child);
+    }
+  }
+
+  return uniqueChildren;
 }
