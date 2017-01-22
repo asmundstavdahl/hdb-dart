@@ -38,7 +38,7 @@ main(List<String> args) async {
   await for (HttpRequest request in requestServer) {
     print(request.method + " " + request.uri.toString());
 
-    String key = request.uri.toString();
+    String key = request.uri.path;
     key = key.replaceAll(new RegExp('//+'), "/");
     String value = await UTF8.decodeStream(request);
 
