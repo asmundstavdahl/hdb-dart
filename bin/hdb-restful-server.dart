@@ -42,7 +42,17 @@ main(List<String> args) async {
     key = key.replaceAll(new RegExp('//+'), "/");
     String value = await UTF8.decodeStream(request);
 
-    switch (request.method) {
+    String finalMethod = request.method;
+    if (null != request.uri.queryParameters["method"]) {
+      finalMethod = request.uri.queryParameters["method"];
+    }
+
+    String finalValue = value;
+    if (null != request.uri.queryParameters["value"]) {
+      finalValue = request.uri.queryParameters["value"];
+    }
+
+    switch (finalMethod) {
       case "GET":
         String result;
         if (key.endsWith("/")) {
@@ -54,14 +64,14 @@ main(List<String> args) async {
         request.response.close();
         break;
       case "PUT":
-        setData(key, value);
+        setData(key, finalValue);
         request.response.write("");
         request.response.close();
         break;
       case "POST":
         int index = 1 + getLastNumberedChildIndexAtKey(key);
         String childKey = key + "/${index}";
-        setData(childKey, value);
+        setData(childKey, finalValue);
         request.response.write("${index}");
         request.response.close();
         break;
