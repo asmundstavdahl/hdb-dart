@@ -1,3 +1,4 @@
+import 'dart:async';
 import "dart:convert";
 import 'dart:io';
 
@@ -10,6 +11,7 @@ String usage = """Usage:
 \tport\tdefault: $port""";
 
 Map<String, String> data = new Map<String, String>();
+Map<String, Completer> changeFutures = new Map<String, Completer>();
 
 main(List<String> args) async {
   try {
@@ -38,30 +40,43 @@ main(List<String> args) async {
   await for (HttpRequest request in requestServer) {
     print(request.method + " " + request.uri.toString());
 
+    var parameters = request.uri.queryParameters;
+
     String key = request.uri.path;
     key = key.replaceAll(new RegExp('//+'), "/");
     String value = await UTF8.decodeStream(request);
 
     String finalMethod = request.method;
-    if (null != request.uri.queryParameters["method"]) {
-      finalMethod = request.uri.queryParameters["method"];
+    if (null != parameters["method"]) {
+      finalMethod = parameters["method"];
     }
 
     String finalValue = value;
-    if (null != request.uri.queryParameters["value"]) {
-      finalValue = request.uri.queryParameters["value"];
+    if (null != parameters["value"]) {
+      finalValue = parameters["value"];
     }
 
     switch (finalMethod) {
       case "GET":
-        String result;
-        if (key.endsWith("/")) {
-          result = getChildrenAtKey(key).join("\n");
+        if (parameters.containsKey("wait")) {
+          changeFutures[key] = new Completer();
+          changeFutures[key].future.then((value) {
+            request.response.write(value);
+            request.response.close();
+          }).catchError((e) {
+            request.response.statusCode = 500;
+            request.response.write(e.toString());
+            request.response.close();
+          });
         } else {
+          String result;
+          if (key.endsWith("/")) {
+            result = getChildrenAtKey(key).join("\n");
+          } else {}
           result = getData(key);
+          request.response.write(result);
+          request.response.close();
         }
-        request.response.write(result);
-        request.response.close();
         break;
       case "PUT":
         setData(key, finalValue);
@@ -112,6 +127,10 @@ String getData(key) {
 setData(key, value) async {
   print("\t" + key + " ← " + value);
   data[key] = value;
+  if (changeFutures.containsKey(key)) {
+    changeFutures[key].complete(value);
+    changeFutures.remove(key);
+  }
   await new File(persistanceFileName).writeAsString(JSON.encode(data));
 }
 
