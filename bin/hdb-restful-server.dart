@@ -38,9 +38,18 @@ main(List<String> args) async {
   print('listening on localhost, port ${requestServer.port}');
 
   await for (HttpRequest request in requestServer) {
-    print(request.method + " " + request.uri.toString());
-
     var parameters = request.uri.queryParameters;
+
+    print("\x1b[34m" +
+        new DateTime.now().toString() +
+        "\x1b[0m  " +
+        request.method +
+        " " +
+        request.uri.toString() +
+        "  \x1b[33m" +
+        parameters["as"] +
+        "\x1b[0m  " +
+        request.connectionInfo.remoteAddress.host);
 
     String key = request.uri.path;
     key = key.replaceAll(new RegExp('//+'), "/");
