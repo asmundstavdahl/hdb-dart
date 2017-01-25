@@ -47,7 +47,7 @@ main(List<String> args) async {
         " " +
         request.uri.toString() +
         "  \x1b[33m" +
-        parameters["as"] +
+        (parameters.containsKey("as") ?parameters["as"] :"?") +
         "\x1b[0m  " +
         request.connectionInfo.remoteAddress.host);
 
